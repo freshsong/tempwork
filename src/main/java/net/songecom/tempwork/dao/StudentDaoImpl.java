@@ -43,15 +43,40 @@ public class StudentDaoImpl implements StudentDao {
 		
 		return rs;  //리턴값 
 	}
-
+	
+	//업데이트 쿼리문
 	@Override
 	public int update(StudentDto dto) {
-		return 0;
+		
+		String sql = "update student set stu_name=?, stu_email=?, stu_course=? where stu_id = ?";  //insert 쿼리랑 똑같
+		try {
+			int rs = template.update(sql, new Object[] {
+				dto.getStu_name(),
+				dto.getStu_email(),
+				dto.getStu_course(),
+				dto.getStu_id()
+			});
+			return rs;			
+		}catch(Exception e) {
+			e.printStackTrace();
+			return 0; //쿼리문리턴
+		}
+		
 	}
-
+	
+	//삭제
 	@Override
-	public int delte(int studentId) {
-		return 0;
+	public int delete(int studentId) {
+		String sql = "delete from student where stu_id=?";
+		try {
+			//update insert delete = update, Object타입으로 배열로받기위해[]
+			int rs = template.update(sql, new Object[] {studentId} );
+			return rs;
+			
+		}catch(Exception e) {
+			return 0;
+		}
+		
 	}
 
 	@Override

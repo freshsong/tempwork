@@ -159,4 +159,53 @@ return model;
 		
 		return "redirect:list";
 	}
+	
+	//업데이트
+	@RequestMapping("update")
+	public String update(HttpServletRequest request, Model model) {
+		System.out.println("update() 실행됨");
+		int id = Integer.parseInt(request.getParameter("id")); //파라미터로 보내는거라 db값이랑 다름
+		StudentDto dto = studentDao.findStudentById(id); //db값이랑 맞는지 체크
+		model.addAttribute("dto", dto); //model에 담고 - 컨텐트로 보내기
+		return "update";
+	}
+
+	//업데이트 ok (insertok와 비슷하게 - 참고)
+	@RequestMapping(value="updateok", method=RequestMethod.POST)
+	public String updateok(
+			@RequestParam("name") String name,
+			@RequestParam("email") String email,
+			@RequestParam("course") String course,
+			@RequestParam("id") String id,
+			Model model) {
+			
+			StudentDto dto = new StudentDto();
+			dto.setStu_id(Integer.parseInt(id));
+			dto.setStu_name(name);
+			dto.setStu_email(email);
+			dto.setStu_course(course);
+			int rs = studentDao.update(dto);
+			if(rs > 0) {
+				model.addAttribute("msg", "수정했습니다."); //addObject = 추가한단뜻
+			}else {
+				model.addAttribute("msg", "수정에 실패했습니다.");
+			}
+		return "redirect:list";
+	}
+	
+	//delete구문
+	@RequestMapping("delete")
+	public String delete(HttpServletRequest request, Model model) {
+		System.out.println("delete() 실행");
+		int id = Integer.parseInt(request.getParameter("id"));
+		int rs = studentDao.delete(id);
+		if(rs > 0) {
+			model.addAttribute("msg", "삭제했습니다."); //addObject = 추가한단뜻
+		}else {
+			model.addAttribute("msg", "삭제에 실패했습니다.");
+		}
+		return "redirect:list";
+	}
+	
+	
 }
