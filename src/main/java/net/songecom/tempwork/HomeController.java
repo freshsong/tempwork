@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import net.songecom.tempwork.dao.StudentDao;
 import net.songecom.tempwork.model.StudentDto;
+import net.songecom.tempwork.service.StudentService;
 
 
 @Controller
@@ -29,10 +29,11 @@ public class HomeController {
 	
 	@Autowired //전체로 다 쓸거라 위에 선언 (생성자, 필드, 의존관계 주입이 전부 됨), 생성자에넣는 작업(직접 우리가 안해도 됨)
 				//this. <- 이지랄 안해도됨
-	private StudentDao studentDao;
-	
+	//private StudentDao studentDao; //studentDao는 서비스가 끌어쓰기에 밑에로 변경
+	private StudentService studentService;
+	/*
 	//ModelAndView -> String으로 바꿀때
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping("/")
 	public String home(Locale locale, Model model) throws IOException {  //String 말고 ModelAndView로 받음 - 수정
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
@@ -41,9 +42,23 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		
 		//읽어오기
-		List<StudentDto> listStudent = studentDao.read();
+		List<StudentDto> listStudent = studentService.getAllStudents();
 		model.addAttribute("listStudent", listStudent); //liststudent를 liststudent에 담게 쿼리
 		model.addAttribute("serverTime", formattedDate); //시간담음
+		return "home";
+	}
+	*/
+	@RequestMapping("/")
+	public String home(Locale locale, Model model) throws IOException {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);	
+		String formattedDate = dateFormat.format(date);
+		
+		List<StudentDto> listStudent = studentService.getAllStudents();
+		model.addAttribute("listStudent", listStudent);	
+		model.addAttribute("serverTime", formattedDate );
 		return "home";
 	}
 	
@@ -60,7 +75,7 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		
 		//읽어오기
-		List<StudentDto> listStudent = studentDao.read();
+		List<StudentDto> listStudent = studentService.getAllStudents();
 		if(msg != null) { //msg로 받은값 출력
 			model.addAttribute("msg", msg);
 		}
@@ -97,7 +112,7 @@ return model;
 	public String content(HttpServletRequest request, Model model) {
 		System.out.println("content() 실행됨");
 		int id = Integer.parseInt(request.getParameter("id")); //파라미터로 보내는거라 db값이랑 다름
-		StudentDto dto = studentDao.findStudentById(id); //db값이랑 맞는지 체크
+		StudentDto dto = studentService.getStudentById(id); //db값이랑 맞는지 체크
 		model.addAttribute("dto", dto); //model에 담고 - 컨텐트로 보내기
 		return "content";
 	}
@@ -150,7 +165,7 @@ return model;
 		dto.setStu_email(email);
 		dto.setStu_course(course);
 		
-		int rs = studentDao.create(dto);
+		int rs = studentService.addStudent(dto);
 		if(rs > 0) {
 			model.addAttribute("msg", "새로운 학생을 추가했습니다."); //addObject = 추가한단뜻
 		}else {
@@ -165,7 +180,7 @@ return model;
 	public String update(HttpServletRequest request, Model model) {
 		System.out.println("update() 실행됨");
 		int id = Integer.parseInt(request.getParameter("id")); //파라미터로 보내는거라 db값이랑 다름
-		StudentDto dto = studentDao.findStudentById(id); //db값이랑 맞는지 체크
+		StudentDto dto = studentService.getStudentById(id); //db값이랑 맞는지 체크
 		model.addAttribute("dto", dto); //model에 담고 - 컨텐트로 보내기
 		return "update";
 	}
@@ -184,7 +199,7 @@ return model;
 			dto.setStu_name(name);
 			dto.setStu_email(email);
 			dto.setStu_course(course);
-			int rs = studentDao.update(dto);
+			int rs = studentService.updateStudent(dto);
 			if(rs > 0) {
 				model.addAttribute("msg", "수정했습니다."); //addObject = 추가한단뜻
 			}else {
@@ -198,7 +213,7 @@ return model;
 	public String delete(HttpServletRequest request, Model model) {
 		System.out.println("delete() 실행");
 		int id = Integer.parseInt(request.getParameter("id"));
-		int rs = studentDao.delete(id);
+		int rs = studentService.deleteStudent(id);
 		if(rs > 0) {
 			model.addAttribute("msg", "삭제했습니다."); //addObject = 추가한단뜻
 		}else {

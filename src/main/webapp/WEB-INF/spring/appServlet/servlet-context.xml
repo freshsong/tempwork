@@ -30,16 +30,15 @@
 		<beans:property name="password" value="chlthgml920!!" />
 	</beans:bean>
 	
-	<!-- 메퍼에 등록했지만 혹시모르니 bean 못찾을 수 있기에 기본 경로설정해주는게 좋음, 필요없을 수 있음(매핑에 이미 세팅해놔서) -->
-	<beans:bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<beans:property name="basePackage" value="net.songecome.tempwork.dao." />
-		<beans:property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-	</beans:bean>
+	<!-- SQL 세션 팩토리 설정 -->
+	<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	 <beans:property name="dataSource" ref="dataSource" />
+	 <beans:property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+	 <beans:property name="mapperLocations" value="classpath:mybatis/mappers/*.xml" />
+    </beans:bean>
 	
-	 <!--  SQL 세션 팩토리 설정 -->
-	 <beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-	 	<beans:property name="dataSource" ref="dataSource" /> <!-- 데이터소스 가져와 연결되니깐 -->
-	 	<beans:property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/> <!--  mybatis xml도 경로잡기 -->
-	 	<beans:property name="mapperLocations" value="classpath:mabatis/mappers/mapper/*.xml" /> <!-- 매퍼xml도 경로잡기 , *표 들어가면 어떤거잡지 몰르니 복수형이되어야함 (mapperLocation -> mapperLocations)-->
-	 </beans:bean>
+	<beans:bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	  <beans:property name="basePackage" value="net.songecom.tempwork.dao"/>
+	  <beans:property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</beans:bean>
 </beans:beans>
