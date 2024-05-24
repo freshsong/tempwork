@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- impl 파일 여기다 대신해서 impl 필요없어짐 -->
+<!-- 아래꺼 스튜던트dao에서 가져와서 create부터 써줌 -->
+<mapper namespace="net.songecom.tempwork.dao">
+  <insert id="create" ><!-- insert구문 써주기 -->
+     insert into student(stu_name, stu_email, stu_course) values (#{stu_name},#{stu_email},#{stu_course},?,?,?)
+  </insert>
+  
+  <update id="update">
+    update student set stu_name=#{stu_name}, stu_email=#{stu_email}, stu_course=#{stu_course} where stu_id = ?
+  </update>
+  
+  <delete id="delete" parameterType="int"> <!-- 파라미터타입 써줘도안써도되는데 에러줄이려면 써 -->
+     delete from student where stu_id=#{studentId}
+  </delete>
+  
+  <select id="read" resultType="studentAlias"> <!-- read의 결과값은 dto로 나가는데, alias에서 id값 스튜던트alias로 지정해서 -->    
+    select * from student order by stu_id desc
+  </select>
+  
+  <select id="findStudentById" resultType="studentAlias"  parameterType="int"> <!-- read의 결과값은 dto로 나가는데, alias에서 id값 스튜던트alias로 지정해서 -->
+     select * from student where stu_id = #{studentId}
+  </select>
+  
+</mapper>
