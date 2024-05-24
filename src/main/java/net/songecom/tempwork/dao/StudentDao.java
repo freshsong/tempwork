@@ -14,7 +14,9 @@ public interface StudentDao {
 	
 	public List<StudentDto> read();  //제네릭으로 전체목록 받기 (페이징도 이걸로씀)
 	
-	public List<StudentDto> findStudentById(int studentId); //하나로 받는거 : 세부목록보기 
+	
+	public StudentDto findStudentById(int studentId); //arraylist -> object로 바꾸면서 타입변경 
+	//public List<StudentDto> findStudentById(int studentId); //하나로 받는거 : 세부목록보기 
 	
 	
 }

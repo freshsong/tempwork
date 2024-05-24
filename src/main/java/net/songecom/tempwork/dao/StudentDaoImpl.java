@@ -1,10 +1,13 @@
 package net.songecom.tempwork.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import net.songecom.tempwork.model.StudentDto;
@@ -53,12 +56,78 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public List<StudentDto> read() {
-		return null;
-	}
+		String sql = "select * from student order by stu_id desc";
+		List<StudentDto> stList = template.query(sql, new RowMapper<StudentDto>() {  //Rowmapper는 array리스트로 되어있는것 루프돌려 출력하는것 
 
-	@Override
-	public List<StudentDto> findStudentById(int studentId) {
-		return null;
+			@Override
+			public StudentDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				
+				//dto에 한줄이 담겨서 리스트에 담기고~ -> List<>타입으로 배열로 한줄씩 모두 담김
+				StudentDto dto = new StudentDto(); 
+				dto.setStu_id(rs.getInt("stu_id"));
+				dto.setStu_name(rs.getString("stu_name"));
+				dto.setStu_email(rs.getString("stu_email"));
+				dto.setStu_course(rs.getString("stu_course"));
+				return dto;
+			}
+			
+		});
+		return stList;  //배열로 한줄씩 받은값 변수 위에 stList로 지정되어 리턴
 	}
+	
+	//세부정보 보기 (하나씩보기 = dto에 담아 빼기)
+	@Override
+	public StudentDto findStudentById(int studentId) {
+		
+		String sql = "select * from student where stu_id = ?";
+		try {
+		StudentDto stView = template.queryForObject(
+				sql,
+				new Object[] {studentId} , 
+				new RowMapper<StudentDto>() {  //query말고 queryForObject로 써도 무관 (에러뜸)
+
+			@Override
+			public StudentDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				
+				StudentDto dto = new StudentDto(); 
+				dto.setStu_id(rs.getInt("stu_id"));
+				dto.setStu_name(rs.getString("stu_name"));
+				dto.setStu_email(rs.getString("stu_email"));
+				dto.setStu_course(rs.getString("stu_course"));
+				
+				return dto;
+			}
+		});
+			return stView;
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	/*
+	//세부정보 보기 (배열의 배열 = Arraylist)
+		@Override
+		public List<StudentDto> findStudentById(int studentId) {
+			
+			String sql = "select * from student where stu_id = ?";
+			
+			List<StudentDto> stView = template.query(sql, new RowMapper<StudentDto>() {  //query말고 queryForObject로 써도 무관 (에러뜸)
+
+				@Override
+				public StudentDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+					
+					StudentDto dto = new StudentDto(); 
+					dto.setStu_id(rs.getInt("stu_id"));
+					dto.setStu_name(rs.getString("stu_name"));
+					dto.setStu_email(rs.getString("stu_email"));
+					dto.setStu_course(rs.getString("stu_course"));
+					
+					return dto;
+					
+				}
+			});
+			
+			return stView;
+		}
+		*/
 
 }
