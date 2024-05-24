@@ -2,10 +2,14 @@ package net.songecom.tempwork.dao;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import net.songecom.tempwork.model.StudentDto;
 
+@Repository //bean 주입
 public class StudentDaoImpl implements StudentDao {
 	
 	//jdbc 템플릿 가져오기 (변수 지정)
